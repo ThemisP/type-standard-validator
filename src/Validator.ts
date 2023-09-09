@@ -86,9 +86,11 @@ class OptionalNumberValidator extends Validator<number> {
     if (value === undefined) {
       return;
     }
-    value = Number(value);
-    if (Number.isNaN(value)) {
-      throw new ValidationError("Invalid number", "");
+    if(typeof value === "string") {
+      value = Number(value);
+      if (Number.isNaN(value)) {
+        throw new ValidationError("Invalid number", "");
+      }
     }
     if (this.metadata.type !== typeof value) {
       throw new Error("Validation Error: wrong type");
@@ -147,9 +149,11 @@ class NumberValidator extends Validator<number> {
     if (value === undefined) {
       throw new ValidationError("Required", "");
     }
-    value = Number(value);
-    if (Number.isNaN(value)) {
-      throw new ValidationError("Invalid number", "");
+    if(typeof value === "string") {
+      value = Number(value);
+      if (Number.isNaN(value)) {
+        throw new ValidationError("Invalid number", "");
+      }
     }
     if (this.metadata.type !== typeof value) {
       throw new ValidationError(
@@ -493,7 +497,7 @@ class OptionalObjectValidator<
   };
   validate = (value?: TObj): TObj | undefined => {
     if (value === undefined) return;
-    if (typeof value !== "object") {
+    if (typeof value !== "object" || Array.isArray(value)) {
       throw new ValidationError(
         `Invalid type expected: ${this.metadata.type}`,
         ""
@@ -561,7 +565,7 @@ class ObjectValidator<
     if (value === undefined) {
       throw new ValidationError("Required", "");
     }
-    if (typeof value !== "object") {
+    if (typeof value !== "object" || Array.isArray(value)) {
       throw new ValidationError(
         `Invalid type expected: ${this.metadata.type}`,
         ""

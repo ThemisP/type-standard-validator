@@ -6,12 +6,16 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
+    "test": "jest",
     "build": "tsup src/index.ts --dts --format cjs,esm --minify --clean --out-dir dist"
   },
   "author": "code-surfing",
   "license": "MIT",
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
+    "@types/jest": "^29.5.4",
+    "jest": "^29.6.4",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"
   },
   "dependencies": {
