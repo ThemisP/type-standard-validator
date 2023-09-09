@@ -1,0 +1,20 @@
+{
+  "name": "typesafe-validator",
+  "version": "1.0.1",
+  "description": "A validator package with infered types to help with development and object validation.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --dts --format cjs,esm --minify --clean --out-dir dist"
+  },
+  "author": "code-surfing",
+  "license": "MIT",
+  "devDependencies": {
+    "@changesets/cli": "^2.26.2",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "tsup": "^7.2.0"
+  }
+}
