@@ -26,21 +26,24 @@ class Validator<T> {
       required: false,
     };
   }
-  static object<T extends { [key: string]: Validator<any> }>(
-    obj: T
-  ): ObjectValidator<{
-    [key in keyof T]: (typeof obj)[key] extends Validator<infer J> ? J : never;
-  }> {
-    return new ObjectValidator(obj);
-  }
   static number(): NumberValidator {
     return new NumberValidator();
   }
   static string(): StringValidator {
     return new StringValidator();
   }
+  static boolean(): BooleanValidator {
+    return new BooleanValidator();
+  }
   static array<J>(items: Validator<J>): ArrayValidator<J> {
     return new ArrayValidator(items);
+  }
+  static object<T extends { [key: string]: Validator<any> }>(
+    obj: T
+  ): ObjectValidator<{
+    [key in keyof T]: (typeof obj)[key] extends Validator<infer J> ? J : never;
+  }> {
+    return new ObjectValidator(obj);
   }
   validate: ((value: T) => T) | ((value?: T) => T | undefined) = () => {
     throw new Error("Method not implemented.");
@@ -79,9 +82,6 @@ class OptionalNumberValidator extends Validator<number> {
   required = (): NumberValidator => {
     return new NumberValidator(this);
   };
-  optional = (): OptionalNumberValidator => {
-    return this;
-  };
   validate = (value?: number | string): number | undefined => {
     if (value === undefined) {
       return;
@@ -93,18 +93,21 @@ class OptionalNumberValidator extends Validator<number> {
       }
     }
     if (this.metadata.type !== typeof value) {
-      throw new Error("Validation Error: wrong type");
+      throw new ValidationError(
+        `Invalid type expected: ${this.metadata.type}`,
+        ""
+      );
     }
     if (this.metadata.min && value < this.metadata.min) {
-      throw new Error("Validation Error: min reached");
+      throw new ValidationError(`Minimum of ${this.metadata.min} required`, "");
     }
     if (this.metadata.max && value > this.metadata.max) {
-      throw new Error("Validation Error: max reached");
+      throw new ValidationError(`Maximum of ${this.metadata.max} required`, "");
     }
     if (this.metadata.custom) {
       const result = this.metadata.custom(value);
       if (!!result && typeof result == "object" && "message" in result) {
-        throw new Error("Validation Error: custom error " + result.message);
+        throw new ValidationError(result.message, "");
       } else {
         return result;
       }
@@ -185,6 +188,113 @@ class NumberValidator extends Validator<number> {
   custom = (
     custom: (value: number) => ValidatorError | number
   ): NumberValidator => {
+    this.metadata.custom = custom;
+    return this;
+  };
+}
+
+class OptionalBooleanValidator extends Validator<boolean> {
+  metadata: Valid<boolean>;
+  constructor(n?: BooleanValidator) {
+    super();
+    if (n) {
+      this.metadata = n.metadata;
+      this.metadata.required = false;
+    } else {
+      this.metadata = {
+        type: "boolean",
+        required: false,
+      };
+    }
+  }
+  required = (): BooleanValidator => {
+    return new BooleanValidator(this);
+  };
+  validate = (value?: boolean | string): boolean | undefined => {
+    if (value === undefined) {
+      return;
+    }
+    if(typeof value === "string") {
+      if(value === "true") value = true;
+      else if(value === "false") value = false;
+      else throw new ValidationError("String cannot be converted to true/false", "");
+    }
+    if (this.metadata.type !== typeof value) {
+      throw new ValidationError(
+        `Invalid type expected: ${this.metadata.type}`,
+        ""
+      );
+    }
+    if (this.metadata.custom) {
+      const result = this.metadata.custom(value);
+      if (!!result && typeof result == "object" && "message" in result) {
+        throw new Error("Validation Error: custom error " + result.message);
+      } else {
+        return result;
+      }
+    }
+    return value;
+  };
+
+  custom = (
+    custom: (value?: boolean) => ValidatorError | boolean | undefined
+  ): OptionalBooleanValidator => {
+    this.metadata.custom = custom;
+    return this;
+  };
+}
+
+class BooleanValidator extends Validator<boolean> {
+  metadata: Valid<boolean>;
+  constructor(n?: OptionalBooleanValidator) {
+    super();
+    if (n) {
+      this.metadata = n.metadata;
+      this.metadata.required = true;
+    } else {
+      this.metadata = {
+        type: "boolean",
+        required: true,
+      };
+    }
+  }
+  optional = (): OptionalBooleanValidator => {
+    return new OptionalBooleanValidator(this);
+  };
+  validate = (value: boolean | string): boolean => {
+    if (value === undefined) {
+      throw new ValidationError("Required", "");
+    }
+    if(typeof value === "string") {
+      if(value === "true") value = true;
+      else if(value === "false") value = false;
+      else throw new ValidationError("String cannot be converted to true/false", "");
+    }
+    if (this.metadata.type !== typeof value) {
+      throw new ValidationError(
+        `Invalid type expected: ${this.metadata.type}`,
+        ""
+      );
+    }
+    
+    if (this.metadata.custom) {
+      const result = this.metadata.custom(value);
+      if (!!result && typeof result == "object" && "message" in result) {
+        throw new ValidationError(result.message, "");
+      } else {
+        if (result === undefined) {
+          throw new Error("Invalid custom function");
+        } else {
+          return result;
+        }
+      }
+    }
+    return value;
+  };
+
+  custom = (
+    custom: (value: boolean) => ValidatorError | boolean
+  ): BooleanValidator => {
     this.metadata.custom = custom;
     return this;
   };

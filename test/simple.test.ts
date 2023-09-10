@@ -89,6 +89,56 @@ describe("Number validator", () => {
   });
 })
 
+describe("Boolean validator", () => {
+  const booleanSchema = tsv.boolean();
+
+  it("true should return true", () => {
+    const input: any = true;
+    expect(booleanSchema.validate(input)).toBe(true);
+  });
+
+  it("'true' (string) should return true", () => {
+    const input: any = "true";
+    expect(booleanSchema.validate(input)).toBe(true);
+  });
+
+  it("1 should return an error", () => {
+    const input: any = 1;
+    expect(() => booleanSchema.validate(input)).toThrowError();
+  });
+  
+  it("'test' should return an error", () => {
+    const input: any = "test";
+    expect(() => booleanSchema.validate(input)).toThrowError();
+  });
+
+  it("null should return an error", () => {
+    const input: any = null;
+    expect(() => booleanSchema.validate(input)).toThrowError();
+  });
+
+  it("undefined should return an error", () => {
+    const input: any = undefined;
+    expect(() => booleanSchema.validate(input)).toThrowError();
+  });
+
+  it("[] should return an error", () => {
+    const input: any = [];
+    expect(() => booleanSchema.validate(input)).toThrowError();
+  });
+
+  it("{} should return an error", () => {
+    const input: any = {};
+    expect(() => booleanSchema.validate(input)).toThrowError();
+  });
+
+  const booleanSchemaOptional = tsv.boolean().optional();
+  it("undefined should return undefined (optional number)", () => {
+    const input: any = undefined;
+    expect(booleanSchemaOptional.validate(input)).toBeUndefined();
+  });
+})
+
 describe("Array validator", () => {
   const arraySchema = tsv.array(tsv.number());
   it("[] should return a []", () => {
