@@ -55,6 +55,9 @@ class Validator<T> {
       ) => Validator<T>) = () => {
     throw new Error("Method not implemented.");
   };
+  _getDefinitions() {
+    return this.metadata;
+  }
 }
 
 class OptionalNumberValidator extends Validator<number> {
@@ -497,6 +500,12 @@ class OptionalArrayValidator<T> extends Validator<any[]> {
     this.metadata.custom = custom;
     return this;
   };
+  _getDefinitions() {
+    return {
+      ...this.metadata,
+      items: this.validator._getDefinitions(),
+    }
+  }
 }
 
 class ArrayValidator<T> extends Validator<any[]> {
@@ -575,6 +584,12 @@ class ArrayValidator<T> extends Validator<any[]> {
     this.metadata.custom = custom;
     return this;
   };
+  _getDefinitions() {
+    return {
+      ...this.metadata,
+      items: this.validator._getDefinitions(),
+    }
+  }
 }
 
 class OptionalObjectValidator<
@@ -641,6 +656,15 @@ class OptionalObjectValidator<
     ) => ValidatorError | Object | undefined;
     return this;
   };
+  _getDefinitions() {
+    return {
+      ...this.metadata,
+      items: Object.entries(this.validator).reduce((acc: any, [key, validator]) => {
+        acc[key] = validator._getDefinitions();
+        return acc;
+      }, {})
+    }
+  }
 }
 
 class ObjectValidator<
@@ -721,6 +745,15 @@ class ObjectValidator<
     ) => ValidatorError | Object | undefined;
     return this;
   };
+  _getDefinitions() {
+    return {
+      ...this.metadata,
+      items: Object.entries(this.validator).reduce((acc: any, [key, validator]) => {
+        acc[key] = validator._getDefinitions();
+        return acc;
+      }, {})
+    }
+  }
 }
 
 export default Validator;
