@@ -10,15 +10,15 @@ This is a npm package attempting to replace popular validation libraries like Jo
 You can install this package using npm or yarn:
 
 ```bash
-npm install typesafe-validator
+npm install type-standard-validator
 # or
-yarn add typesafe-validator
+yarn add type-standard-validator
 ```
 
 ## Usage
 
 ```javascript
-const tsv = require("typescript-validator");
+const tsv = require("type-standard-validator");
 // this input might be the data from http request or
 // dynamic data that you don't know the type of and need to
 // verify / validate the structure!
@@ -61,7 +61,7 @@ Create a number validator
 **Example:**
 
 ```javascript
-const tsv = require("typescript-validator");
+const tsv = require("type-standard-validator");
 const schema = tsv.number();
 const numberValue = schema.validate(1); // the input here
 console.log(numberValue); // 1
@@ -81,7 +81,7 @@ Create a string validator
 **Example:**
 
 ```javascript
-const tsv = require("typescript-validator");
+const tsv = require("type-standard-validator");
 const schema = tsv.string();
 const stringValue = schema.validate("test"); // the input here
 console.log(stringValue); // test
@@ -103,7 +103,7 @@ Create an array validator
 **Example:**
 
 ```javascript
-const tsv = require("typescript-validator");
+const tsv = require("type-standard-validator");
 const schema = tsv.array(tsv.number());
 const arrayValue = schema.validate([]); // the input here
 console.log(arrayValue); // []
@@ -127,7 +127,7 @@ Create an object validator
 **Example:**
 
 ```javascript
-const tsv = require("typescript-validator");
+const tsv = require("type-standard-validator");
 const objectSchema = tsv.object({
   foo: tsv.string(),
   bar: tsv.number().optional(),
