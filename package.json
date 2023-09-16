@@ -1,5 +1,5 @@
 {
-  "name": "typesafe-validator",
+  "name": "type-standard-validator",
   "version": "1.0.1",
   "description": "A validator package with infered types to help with development and object validation.",
   "main": "dist/index.js",

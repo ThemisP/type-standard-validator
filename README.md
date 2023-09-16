@@ -1,6 +1,6 @@
-# Typesafe Validator
+# Type Standard Validator (TSV)
 
-[![npm version](https://badge.fury.io/js/typesafe-validator.svg)](https://www.npmjs.com/package/typesafe-validator)
+[![npm version](https://badge.fury.io/js/type-standard-validator.svg)](https://www.npmjs.com/package/type-standard-validator)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 This is a npm package attempting to replace popular validation libraries like Joi and Yup offering a better type expereince from them. The main focus of this project is to return a correctly typed value back after validation so that intelisense for JavaScript and types for TypeScript work correctly.
