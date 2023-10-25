@@ -164,3 +164,24 @@ describe("Nested Object schema (required, optional and unknown keys)", () => {
     expect(() => nestedObjectSchema.validate(input)).toThrowError();
   });
 });
+
+describe("Error messsage", () => {
+  const nestedObjectSchema = tsv.object({
+    foo: tsv.string(),
+    bar: tsv.object({
+      baz: tsv.number(),
+      qux: tsv.number().optional(),
+    }).unknown(true)
+  });
+
+  it("{ foo: 'test', bar: { baz: 'test' } } should return an error", () => {
+    const input: any = { bar: { baz: "test" } };
+    try {
+      nestedObjectSchema.validate(input);
+
+    } catch (err) {
+      console.log(err.toJSON());
+    }
+    expect(() => nestedObjectSchema.validate(input)).toThrowError();
+  });
+});
