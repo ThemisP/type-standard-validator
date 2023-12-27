@@ -23,6 +23,20 @@ export default class OptionalNumberValidator implements Validator<number> {
     this.metadata.max = max;
     return this;
   };
+  /**
+   * Add a list of allowed values
+   */
+  whitelist = (valid: number[]) => {
+    this.metadata.valid = valid;
+    return this;
+  };
+  /**
+   * Add a list of disallowed values
+   */
+  blacklist = (invalid: number[]) => {
+    this.metadata.invalid = invalid;
+    return this;
+  };
   required = (): NumberValidator => {
     return new NumberValidator(this);
   };
@@ -47,6 +61,19 @@ export default class OptionalNumberValidator implements Validator<number> {
     }
     if (this.metadata.max && value > this.metadata.max) {
       throw new ValidationError(`Maximum of ${this.metadata.max} required`, key);
+    }
+
+    if (this.metadata.valid && !this.metadata.valid.includes(value)) {
+      throw new ValidationError(
+        `Invalid value, must be one of: ${this.metadata.valid.join(", ")}`,
+        key
+      );
+    }
+    if (this.metadata.invalid && this.metadata.invalid.includes(value)) {
+      throw new ValidationError(
+        `Invalid value, must NOT be one of: ${this.metadata.invalid.join(", ")}`,
+        key
+      );
     }
     if (this.metadata.custom) {
       const result = this.metadata.custom(value);

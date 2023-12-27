@@ -176,12 +176,6 @@ describe("Error messsage", () => {
 
   it("{ foo: 'test', bar: { baz: 'test' } } should return an error", () => {
     const input: any = { bar: { baz: "test" } };
-    try {
-      nestedObjectSchema.validate(input);
-
-    } catch (err) {
-      console.log(err.toJSON());
-    }
     expect(() => nestedObjectSchema.validate(input)).toThrowError();
   });
 });

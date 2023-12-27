@@ -23,6 +23,20 @@ export default class StringValidator implements Validator<string> {
     this.metadata.max = max;
     return this;
   };
+  /**
+   * Add a list of allowed values
+   */
+  whitelist = (valid: string[]) => {
+    this.metadata.valid = valid;
+    return this;
+  };
+  /**
+   * Add a list of disallowed values
+   */
+  blacklist = (invalid: string[]) => {
+    this.metadata.invalid = invalid;
+    return this;
+  };
   optional = (): OptionalStringValidator => {
     return new OptionalStringValidator(this);
   };
@@ -45,6 +59,18 @@ export default class StringValidator implements Validator<string> {
     if (this.metadata.max && value.length > this.metadata.max) {
       throw new ValidationError(
         `Maximum of ${this.metadata.max} characters required`,
+        key
+      );
+    }
+    if (this.metadata.valid && !this.metadata.valid.includes(value)) {
+      throw new ValidationError(
+        `Invalid value, must be one of: ${this.metadata.valid.join(", ")}`,
+        key
+      );
+    }
+    if (this.metadata.invalid && this.metadata.invalid.includes(value)) {
+      throw new ValidationError(
+        `Invalid value, must NOT be one of: ${this.metadata.invalid.join(", ")}`,
         key
       );
     }
