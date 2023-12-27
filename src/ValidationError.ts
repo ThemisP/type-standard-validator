@@ -3,7 +3,7 @@ export interface ValidationErrorDetails {
   message: string;
 }
 
-class ValidationError extends Error {
+export default class ValidationError extends Error {
   details: ValidationErrorDetails;
   constructor(message: string, path: string) {
     super("Invalid Data");
@@ -18,5 +18,3 @@ class ValidationError extends Error {
     details: this.details,
   });
 }
-
-export default ValidationError;
