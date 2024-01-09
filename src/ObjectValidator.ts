@@ -19,6 +19,7 @@ export default class ObjectValidator<
         type: "object",
         required: true,
         unknown: false,
+        custom: []
       };
     }
     this.validator = validator;
@@ -54,29 +55,21 @@ export default class ObjectValidator<
         throw new ValidationError(`Unknown key not allowed ${_key}`, key);
       }
     }
-    if (this.metadata.custom) {
-      const result = this.metadata.custom(value) as
-        | ValidationError
-        | TObj
-        | undefined;
+    let finalResult = value;
+    for (const custom of this.metadata.custom) {
+      const result = custom(finalResult);
       if (!!result && typeof result == "object" && "message" in result) {
         throw new ValidationError(result.message, key);
       } else {
-        if (result === undefined) {
-          throw new Error("Invalid custom function");
-        } else {
-          return result;
-        }
+        finalResult = result;
       }
     }
-    return value;
+    return finalResult;
   };
   custom = (
     custom: (value: TObj) => ValidatorError | TObj
   ): ObjectValidator<TObj> => {
-    this.metadata.custom = custom as (
-      value?: Object
-    ) => ValidatorError | TObj | undefined;
+    this.metadata.custom.push(custom);
     return this;
   };
   _getDefinitions() {

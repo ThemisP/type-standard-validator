@@ -12,6 +12,7 @@ export default class StringValidator implements Validator<string> {
       this.metadata = {
         type: "string",
         required: true,
+        custom: [],
       };
     }
   }
@@ -23,6 +24,20 @@ export default class StringValidator implements Validator<string> {
     this.metadata.max = max;
     return this;
   };
+  /**
+   * Will always convert to lowercase since email addresses are case insensitive
+   */
+  email = () => {
+    this.metadata.custom.push((v) => {
+      if (!v.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+        return {
+          message: "Invalid email address"
+        }
+      }
+      return v.toLowerCase();
+    });
+    return this;
+  }
   /**
    * Add a list of allowed values
    */
@@ -74,19 +89,16 @@ export default class StringValidator implements Validator<string> {
         key
       );
     }
-    if (this.metadata.custom) {
-      const result = this.metadata.custom(value);
+    let finalResult = value;
+    for (const custom of this.metadata.custom) {
+      const result = custom(finalResult);
       if (!!result && typeof result == "object" && "message" in result) {
         throw new ValidationError(result.message, key);
       } else {
-        if (result === undefined) {
-          throw new Error("Invalid custom function");
-        } else {
-          return result;
-        }
+        finalResult = result;
       }
     }
-    return value;
+    return finalResult;
   };
 
   _getDefinitions() {
@@ -96,7 +108,7 @@ export default class StringValidator implements Validator<string> {
   custom = (
     custom: (value: string) => ValidatorError | string
   ): StringValidator => {
-    this.metadata.custom = custom;
+    this.metadata.custom.push(custom);
     return this;
   };
 }

@@ -12,6 +12,7 @@ export default class NumberValidator implements Validator<number> {
       this.metadata = {
         type: "number",
         required: true,
+        custom: [],
       };
     }
   }
@@ -74,19 +75,16 @@ export default class NumberValidator implements Validator<number> {
         key
       );
     }
-    if (this.metadata.custom) {
-      const result = this.metadata.custom(value);
+    let finalResult = value;
+    for (const custom of this.metadata.custom) {
+      const result = custom(finalResult);
       if (!!result && typeof result == "object" && "message" in result) {
         throw new ValidationError(result.message, key);
       } else {
-        if (result === undefined) {
-          throw new Error("Invalid custom function");
-        } else {
-          return result;
-        }
+        finalResult = result;
       }
     }
-    return value;
+    return finalResult;
   };
 
   _getDefinitions(): Valid<number> {
@@ -96,7 +94,7 @@ export default class NumberValidator implements Validator<number> {
   custom = (
     custom: (value: number) => ValidatorError | number
   ): NumberValidator => {
-    this.metadata.custom = custom;
+    this.metadata.custom.push(custom);
     return this;
   };
 }

@@ -13,9 +13,7 @@ export type Valid<T> = {
   pattern?: RegExp;
   valid?: T[];
   invalid?: T[];
-  custom?:
-  | ((value: T) => ValidatorError | T)
-  | ((value?: T) => ValidatorError | T | undefined);
+  custom: ((value: T) => ValidatorError | T)[];
 };
 
 export default interface Validator<T> {

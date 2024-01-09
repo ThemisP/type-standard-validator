@@ -12,6 +12,7 @@ export default class OptionalNumberValidator implements Validator<number> {
       this.metadata = {
         type: "number",
         required: false,
+        custom: [],
       };
     }
   }
@@ -75,15 +76,18 @@ export default class OptionalNumberValidator implements Validator<number> {
         key
       );
     }
-    if (this.metadata.custom) {
-      const result = this.metadata.custom(value);
-      if (!!result && typeof result == "object" && "message" in result) {
-        throw new ValidationError(result.message, key);
-      } else {
-        return result;
+    let finalResult = value;
+    for (const custom of this.metadata.custom) {
+      if (this.metadata.custom) {
+        const result = custom(finalResult);
+        if (!!result && typeof result == "object" && "message" in result) {
+          throw new ValidationError(result.message, key);
+        } else {
+          finalResult = result;
+        }
       }
     }
-    return value;
+    return finalResult;
   };
 
   _getDefinitions(): Valid<number> {
@@ -91,9 +95,9 @@ export default class OptionalNumberValidator implements Validator<number> {
   }
 
   custom = (
-    custom: (value?: number) => ValidatorError | number | undefined
+    custom: (value: number) => ValidatorError | number
   ): OptionalNumberValidator => {
-    this.metadata.custom = custom;
+    this.metadata.custom.push(custom);
     return this;
   };
 }

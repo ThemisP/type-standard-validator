@@ -14,6 +14,7 @@ export default class ArrayValidator<T> implements Validator<any[]> {
       this.metadata = {
         type: "array",
         required: true,
+        custom: [],
       };
       this.validator = validator;
     }
@@ -56,25 +57,22 @@ export default class ArrayValidator<T> implements Validator<any[]> {
       let result = this.validator.validate(v);
       return result;
     }) as T[];
-    if (this.metadata.custom) {
-      const result = this.metadata.custom(value);
+    let finalResult = value;
+    for (const custom of this.metadata.custom) {
+      const result = custom(finalResult);
       if (!!result && typeof result == "object" && "message" in result) {
         throw new ValidationError(result.message, key);
       } else {
-        if (result === undefined) {
-          throw new Error("Invalid custom function");
-        } else {
-          return result;
-        }
+        finalResult = result;
       }
     }
-    return value;
+    return finalResult;
   };
 
   custom = (
-    custom: (value?: T[]) => ValidatorError | T[] | undefined
+    custom: (value: T[]) => ValidatorError | T[]
   ): ArrayValidator<T> => {
-    this.metadata.custom = custom;
+    this.metadata.custom.push(custom);
     return this;
   };
   _getDefinitions() {

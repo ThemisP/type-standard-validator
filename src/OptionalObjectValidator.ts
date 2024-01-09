@@ -19,6 +19,7 @@ export default class OptionalObjectValidator<
         type: "object",
         required: false,
         unknown: false,
+        custom: [],
       };
     }
     this.validator = validator;
@@ -44,18 +45,16 @@ export default class OptionalObjectValidator<
         throw new ValidationError(`Unknown key not allowed ${_key}`, key);
       }
     }
-    if (this.metadata.custom) {
-      const result = this.metadata.custom(value) as
-        | TObj
-        | undefined
-        | ValidationError;
+    let finalResult = value;
+    for (const custom of this.metadata.custom) {
+      const result = custom(finalResult);
       if (!!result && typeof result == "object" && "message" in result) {
         throw new ValidationError(result.message, key);
       } else {
-        return result;
+        finalResult = result;
       }
     }
-    return value;
+    return finalResult;
   };
   _getDefinitions() {
     return {
@@ -68,11 +67,9 @@ export default class OptionalObjectValidator<
   }
 
   custom = (
-    custom: (value?: TObj) => ValidatorError | TObj | undefined
+    custom: (value: TObj) => ValidatorError | TObj
   ): OptionalObjectValidator<TObj> => {
-    this.metadata.custom = custom as (
-      value?: TObj
-    ) => ValidatorError | TObj | undefined;
+    this.metadata.custom.push(custom);
     return this;
   };
 }

@@ -12,6 +12,7 @@ export default class OptionalBooleanValidator implements Validator<boolean> {
       this.metadata = {
         type: "boolean",
         required: false,
+        custom: [],
       };
     }
   }
@@ -33,15 +34,16 @@ export default class OptionalBooleanValidator implements Validator<boolean> {
         key
       );
     }
-    if (this.metadata.custom) {
-      const result = this.metadata.custom(value);
+    let finalResult = value;
+    for (const custom of this.metadata.custom) {
+      const result = custom(finalResult);
       if (!!result && typeof result == "object" && "message" in result) {
         throw new Error("Validation Error: custom error " + result.message);
       } else {
-        return result;
+        finalResult = result;
       }
     }
-    return value;
+    return finalResult;
   };
 
   _getDefinitions(): Valid<boolean> {
@@ -49,9 +51,9 @@ export default class OptionalBooleanValidator implements Validator<boolean> {
   }
 
   custom = (
-    custom: (value?: boolean) => ValidatorError | boolean | undefined
+    custom: (value: boolean) => ValidatorError | boolean
   ): OptionalBooleanValidator => {
-    this.metadata.custom = custom;
+    this.metadata.custom.push(custom);
     return this;
   };
 }
