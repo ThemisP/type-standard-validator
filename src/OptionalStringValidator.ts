@@ -1,6 +1,6 @@
 import StringValidator from "./StringValidator";
 import ValidationError from "./ValidationError";
-import Validator, { Valid, ValidatorError } from "./Validator";
+import { Valid, ValidatorError, Validator } from "./Validator";
 
 
 export default class OptionalStringValidator implements Validator<string> {

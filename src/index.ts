@@ -1,6 +1,6 @@
 import VE from './ValidationError';
 import tsv from './tsv';
+export * from "./Validator";
 
-
-export default tsv;
 export const ValidationError = VE;
+export default tsv;

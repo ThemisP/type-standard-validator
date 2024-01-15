@@ -3,7 +3,7 @@ import BooleanValidator from "./BooleanValidator";
 import StringValidator from "./StringValidator";
 import ArrayValidator from "./ArrayValidator";
 import ObjectValidator from "./ObjectValidator";
-import Validator from "./Validator";
+import { Validator } from "./Validator";
 
 
 export default class tsv {

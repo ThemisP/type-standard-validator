@@ -1,6 +1,6 @@
 import ObjectValidator from "./ObjectValidator";
 import ValidationError from "./ValidationError";
-import Validator, { Valid, ValidatorError } from "./Validator";
+import { Valid, ValidatorError, Validator } from "./Validator";
 
 export default class OptionalObjectValidator<
   TObj extends { [key: string]: any }

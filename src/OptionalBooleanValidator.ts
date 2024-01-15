@@ -1,6 +1,6 @@
 import BooleanValidator from "./BooleanValidator";
 import ValidationError from "./ValidationError";
-import Validator, { Valid, ValidatorError } from "./Validator";
+import { Valid, ValidatorError, Validator } from "./Validator";
 
 export default class OptionalBooleanValidator implements Validator<boolean> {
   metadata: Valid<boolean>;

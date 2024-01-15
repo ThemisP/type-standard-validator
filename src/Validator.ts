@@ -16,7 +16,7 @@ export type Valid<T> = {
   custom: ((value: T) => ValidatorError | T)[];
 };
 
-export default interface Validator<T> {
+export interface Validator<T> {
   metadata: Valid<T>;
   validate: ((value: T, key?: string) => T) | ((value?: T, key?: string) => T | undefined);
   custom?:

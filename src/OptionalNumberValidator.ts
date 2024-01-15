@@ -1,6 +1,6 @@
 import NumberValidator from "./NumberValidator";
 import ValidationError from "./ValidationError";
-import Validator, { Valid, ValidatorError } from "./Validator";
+import { Valid, ValidatorError, Validator } from "./Validator";
 
 export default class OptionalNumberValidator implements Validator<number> {
   metadata: Valid<number>;
